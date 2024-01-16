@@ -1,7 +1,25 @@
-// Register a Service Worker.
-navigator.serviceWorker.register('service-worker.js');
+function requestPermission() {
+  return new Promise(function(resolve, reject) {
+    const permissionResult = Notification.requestPermission(function(result) {
+      // Поддержка устаревшей версии с функцией обратного вызова.
+      resolve(result);
+    });
+    if (permissionResult) {
+      permissionResult.then(resolve, reject);
+    }
+  })
+  .then(function(permissionResult) {
+    if (permissionResult !== 'granted') {
+      console.log(permissionResult);
+      alert("Permission not granted")
+      throw new Error('Permission not granted.');
+    }
+  });
+}
 
 document.getElementById("clickMe").addEventListener("click", function () {
+  requestPermission()
+
   navigator.serviceWorker.ready
     .then(function (registration) {
       // Use the PushManager to get the user's subscription to the push service.
@@ -30,4 +48,6 @@ document.getElementById("clickMe").addEventListener("click", function () {
       document.getElementById("result").innerHTML = JSON.stringify(subscription);
       console.log(JSON.stringify(subscription))
     });
+  
+  navigator.serviceWorker.register('service-worker.js');
 })
