@@ -26,5 +26,6 @@ navigator.serviceWorker.ready
     });
   });
 }).then(function(subscription) {
+  document.getElementById("result").innerHTML = JSON.stringify(subscription);
   console.log(JSON.stringify(subscription))
 });
